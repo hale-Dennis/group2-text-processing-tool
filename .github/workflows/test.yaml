@@ -1,4 +1,4 @@
-name: Java Test with Maven
+name: Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:

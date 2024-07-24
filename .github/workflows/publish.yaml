@@ -1,8 +1,9 @@
-name: Java CI with Maven
+name: Package Application
 
-on: 
+on:
     push:
-        branches: ["main"]
+        branches: 
+            -main
 jobs:
   build_test:
     runs-on: ubuntu-latest
