@@ -1,15 +1,19 @@
 package org.group2.textprocessingtool.controllers;
 
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
+import org.group2.textprocessingtool.model.TextEditor;
 
 import java.io.File;
 
 public class TextProcessingMainController {
 
+    private TextEditor textEditor;
     private File currentFile;
 
     private Stage primaryStage;
@@ -20,6 +24,10 @@ public class TextProcessingMainController {
     public TextField replacementWord;
     @FXML
     private TextArea textInputArea;
+
+    @FXML
+    private TextFlow resultArea;
+    private ObservableList<String> textList;
 
     public void setPrimaryStage(Stage primaryStage) {
 
@@ -75,6 +83,16 @@ public class TextProcessingMainController {
     }
 
     public void handleAbout(ActionEvent actionEvent) {
+    }
+
+
+    @FXML
+    public void handleAdd() {
+        String text = textInputArea.getText();
+        textEditor.addText(text);
+        textList.setAll(textEditor.getContent());
+        //clearInputs();
+        resultArea.getChildren().clear();
     }
 
 
