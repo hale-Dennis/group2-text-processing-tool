@@ -41,6 +41,7 @@ public class TextProcessingMainController {
     }
 
     public void handleRedo(ActionEvent actionEvent) {
+        textInputArea.redo();
     }
 
     public void handleCut(ActionEvent actionEvent) {
