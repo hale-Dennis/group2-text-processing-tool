@@ -10,7 +10,11 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TextProcessingMainController {
 
@@ -186,6 +190,31 @@ public class TextProcessingMainController {
     }
 
     public void handleAbout(ActionEvent actionEvent) {
+    }
+    private void handleReplaceWithRegex(String findWord, String replaceWord) {
+        List<String> matches = new ArrayList<>();
+        String[] arr = textInputArea.getText().split("\\s+");
+        StringBuilder finalString = new StringBuilder();
+        Pattern pattern = Pattern.compile(findWord);
+        Matcher matcher = pattern.matcher(textInputArea.getText());
+
+        while (matcher.find()) {
+            String match = matcher.group();
+            matches.add(match);
+        }
+
+        for(int i=0; i<arr.length; i++){
+            if(matches.contains(arr[i])){
+                arr[i] = replaceWord;
+            }
+        }
+
+        for(String elem: arr){
+            finalString.append(elem).append(" ");
+        }
+
+        textInputArea.setText(String.valueOf(finalString));
+        showAlert("regex replacement", "patterns successfully replaced");
     }
 
 }
