@@ -2,12 +2,12 @@ package org.group2.textprocessingtool.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -178,6 +178,48 @@ public class TextProcessingMainController {
     }
 
     public void handleCustomRegex(ActionEvent actionEvent) {
+        //custom dialog
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Search and Replace with Regex");
+        dialog.setHeaderText("Enter the regex to find and replace:");
+
+        ButtonType searchButtonType = new ButtonType("Replace", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(searchButtonType, ButtonType.CANCEL);
+
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField findField = new TextField();
+        findField.setPromptText("Find what pattern");
+        TextField replaceField = new TextField();
+        replaceField.setPromptText("Replace with");
+
+        grid.add(new Label("Find what:"), 0, 0);
+        grid.add(findField, 1, 0);
+        grid.add(new Label("Replace with:"), 0, 1);
+        grid.add(replaceField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convert the result to a pair of strings when the search button is clicked
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == searchButtonType) {
+                return new Pair<>(findField.getText(), replaceField.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(pair -> {
+            String findWord = pair.getKey();
+            String replaceWord = pair.getValue();
+
+            handleReplaceWithRegex(findWord, replaceWord);
+        });
     }
 
     public void handlePhone(ActionEvent actionEvent) {
