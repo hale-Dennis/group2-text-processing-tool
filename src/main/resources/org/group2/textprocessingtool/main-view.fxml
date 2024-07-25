@@ -13,8 +13,8 @@
         <MenuBar>
             <Menu text="File">
                 <MenuItem text="Open" onAction="#handleOpen"/>
-                <MenuItem text="Save" onAction="#handleSaveTwo"/>
-                <MenuItem text="Save As" onAction="#handleSaveTwo"/>
+                <MenuItem text="Save" onAction="#handleSave"/>
+                <MenuItem text="Save As" onAction="#handleSaveAs"/>
                 <MenuItem text="Exit" onAction="#handleExit"/>
             </Menu>
             <Menu text="Edit">

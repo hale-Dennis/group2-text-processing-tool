@@ -7,10 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class TextProcessingMainController {
 
@@ -56,7 +53,32 @@ public class TextProcessingMainController {
         textInputArea.setText(content.toString());
     }
 
-    public void handleSaveTwo(ActionEvent actionEvent) {
+    public void handleSave(ActionEvent actionEvent) {
+        if (currentFile != null) {
+            saveTextToFile(currentFile);
+        } else {
+            handleSaveAs(actionEvent);
+        }
+    }
+    private void saveTextToFile(File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(textInputArea.getText());
+        } catch (IOException e) {
+            // Handle the exception
+            e.printStackTrace();
+        }
+    }
+
+    public void handleSaveAs(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save As");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File file = fileChooser.showSaveDialog(primaryStage);
+
+        if (file != null) {
+            currentFile = file;
+            saveTextToFile(file);
+        }
     }
 
     public void handleExit(ActionEvent actionEvent) {
