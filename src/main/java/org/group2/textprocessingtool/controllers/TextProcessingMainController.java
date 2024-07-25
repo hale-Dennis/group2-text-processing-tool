@@ -6,9 +6,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
+import java.io.*;
 import java.util.Optional;
 
 public class TextProcessingMainController {
@@ -30,9 +31,57 @@ public class TextProcessingMainController {
     }
 
     public void handleOpen(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open File");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File file = fileChooser.showOpenDialog(primaryStage);
+
+        if (file != null) {
+            getTextFromFile(file);
+            currentFile = file;
+        }
+    }
+    
+     private void getTextFromFile(File file) {
+        StringBuilder content = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                content.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            // Handle the exception
+            e.printStackTrace();
+        }
+        textInputArea.setText(content.toString());
     }
 
-    public void handleSaveTwo(ActionEvent actionEvent) {
+    public void handleSave(ActionEvent actionEvent) {
+        if (currentFile != null) {
+            saveTextToFile(currentFile);
+        } else {
+            handleSaveAs(actionEvent);
+        }
+    }
+    private void saveTextToFile(File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(textInputArea.getText());
+        } catch (IOException e) {
+            // Handle the exception
+            e.printStackTrace();
+        }
+    }
+
+    public void handleSaveAs(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save As");
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Text Files", "*.txt"));
+        File file = fileChooser.showSaveDialog(primaryStage);
+
+        if (file != null) {
+            currentFile = file;
+            saveTextToFile(file);
+        }
     }
 
     public void handleExit(ActionEvent actionEvent) {
