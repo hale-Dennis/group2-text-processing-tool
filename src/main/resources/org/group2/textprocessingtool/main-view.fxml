@@ -6,21 +6,50 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.MenuBar?>
 
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.group2.textprocessingtool.controllers.TextProcessingMainController">
     <top>
         <MenuBar>
-            <fx:include source="FileMenu.fxml"/>
-            <fx:include source="EditMenu.fxml"/>
-            <fx:include source="RegexMenu.fxml"/>
-            <fx:include source="HelpMenu.fxml"/>
+            <Menu text="File">
+                <MenuItem text="Open" onAction="#handleOpen"/>
+                <MenuItem text="Save" onAction="#handleSave"/>
+                <MenuItem text="Save As" onAction="#handleSaveAs"/>
+                <MenuItem text="Exit" onAction="#handleExit"/>
+            </Menu>
+            <Menu text="Edit">
+                <MenuItem text="Undo" onAction="#handleUndo"/>
+                <MenuItem text="Redo" onAction="#handleRedo"/>
+                <MenuItem text="Cut" onAction="#handleCut"/>
+                <MenuItem text="Copy" onAction="#handleCopy"/>
+                <MenuItem text="Paste" onAction="#handlePaste"/>
+                <MenuItem text="Find" onAction="#handleFind"/>
+                <MenuItem text="Replace" onAction="#handleReplace"/>
+            </Menu>
+            <Menu text="Regex">
+                <MenuItem text="Custom regex" onAction="#handleCustomRegexTwo"/>
+                <MenuItem text="Replace with regex" onAction="#handleCustomRegex"/>
+                <MenuItem text="Match e-mail" onAction="#handleMail"/>
+                <MenuItem text="Match phone" onAction="#handlePhone"/>
+                <MenuItem text="Match Date" onAction="#handleDate"/>
+            </Menu>
+            <Menu text="Help">
+                <MenuItem text="About" onAction="#handleAbout"/>
+            </Menu>
         </MenuBar>
     </top>
     <center>
-        <VBox spacing="10" alignment="TOP_CENTER">
+        <VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" spacing="10" alignment="TOP_CENTER" >
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
+
+
+
+            <!-- Text Input Area -->
             <TextArea fx:id="textInputArea" prefHeight="800" prefWidth="300" wrapText="true"/>
+
         </VBox>
+
     </center>
 </BorderPane>
