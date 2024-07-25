@@ -20,7 +20,7 @@
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <TextArea fx:id="textInputArea" prefHeight="800" prefWidth="300" wrapText="true"/>
+            <TextArea fx:id="inputOutputArea" prefHeight="800" prefWidth="300" wrapText="true"/>
         </VBox>
     </center>
 </BorderPane>
