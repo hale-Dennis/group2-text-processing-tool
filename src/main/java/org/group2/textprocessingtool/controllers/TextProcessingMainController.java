@@ -174,7 +174,43 @@ public class TextProcessingMainController {
     public void handleReplace(ActionEvent actionEvent) {
     }
 
-    public void handleCustomRegexTwo(ActionEvent actionEvent) {
+    @FXML
+    private void handleCustomRegexTwo() {
+        // Show an input dialog to get the regex pattern from the user
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Custom Regex");
+        dialog.setHeaderText("Enter a regex pattern:");
+        dialog.setContentText("Pattern:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(pattern -> {
+            findAndPrintMatches(pattern);
+        });
+    }
+
+    private void findAndPrintMatches(String regex) {
+        List<String> matches = new ArrayList<>();
+        StringBuilder finalString = new StringBuilder();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(textInputArea.getText());
+
+        // Print matches to console
+        while (matcher.find()) {
+            String match = matcher.group();
+            matches.add(match);
+        }
+        System.out.println(matches.toString());
+        for(String elem: matches){
+            finalString.append(elem + "\n");
+        }
+
+        if(!matches.isEmpty()){
+            showAlert("Regex", String.valueOf(finalString), "Matches Found");
+        }
+        else{
+            showAlert("Regex", "", "No matches found");
+        }
+
     }
 
     public void handleCustomRegex(ActionEvent actionEvent) {
