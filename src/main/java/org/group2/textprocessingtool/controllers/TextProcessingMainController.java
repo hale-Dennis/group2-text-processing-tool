@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.group2.textprocessingtool.model.TextEditor;
 import javafx.util.Pair;
 
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 
 public class TextProcessingMainController {
 
+    private static final int MAX_DISPLAY_LENGTH = 50;
     private File currentFile;
 
     private Stage primaryStage;
@@ -35,11 +37,13 @@ public class TextProcessingMainController {
     private TextFlow resultArea;
     @FXML
     private TextArea textInputArea;
+    @FXML
+    private ListView<String> collectionView;
     @FXML private MenuItem menuItemWordWrap;
     @FXML private MenuItem menuItemZoomIn;
     @FXML private MenuItem menuItemZoomOut;
 
-    private TextEditor textEditor;
+    private final TextEditor textEditor;
     private ObservableList<String> textList;
     private double zoomFactor = 1.0;
 
@@ -49,9 +53,36 @@ public class TextProcessingMainController {
 
     @FXML
     public void initialize() {
-        textEditor = new TextEditor();
-        textList = FXCollections.observableArrayList();
-        ;
+        textList = FXCollections.observableArrayList(textEditor.getContent());
+        collectionView.setItems(textList);
+        collectionView.setCellFactory(new Callback<>() {
+            @Override
+            public ListCell<String> call(ListView<String> listView) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item.length() > MAX_DISPLAY_LENGTH
+                                    ? item.substring(0, MAX_DISPLAY_LENGTH) + "..."
+                                    : item);
+                        }
+                    }
+                };
+            }
+        });
+
+        collectionView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                textInputArea.setText(newValue);
+            }
+        });
+    }
+    public TextProcessingMainController(){
+        textEditor =new TextEditor();
+        textList = FXCollections.observableArrayList(textEditor.getContent());
     }
 
     public void handleOpen(ActionEvent actionEvent) {
@@ -365,7 +396,6 @@ public class TextProcessingMainController {
             showAlert("Success",
                     "Text added to collection.");
             textInputArea.clear(); // Clear the text area after adding text
-            resultArea.getChildren().clear(); // Clear the result area if needed
         } else {
             showAlert("Error", "Text area is empty. Please enter some text.");
         }
