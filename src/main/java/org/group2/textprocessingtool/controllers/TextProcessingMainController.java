@@ -39,14 +39,14 @@ public class TextProcessingMainController {
     private ObservableList<String> textList;
 
     public void setPrimaryStage(Stage primaryStage) {
-
         this.primaryStage = primaryStage;
     }
 
     @FXML
     public void initialize() {
         textEditor = new TextEditor();
-        textList = FXCollections.observableArrayList();;
+        textList = FXCollections.observableArrayList();
+        ;
     }
 
     public void handleOpen(ActionEvent actionEvent) {
@@ -60,8 +60,8 @@ public class TextProcessingMainController {
             currentFile = file;
         }
     }
-    
-     private void getTextFromFile(File file) {
+
+    private void getTextFromFile(File file) {
         StringBuilder content = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
@@ -82,6 +82,7 @@ public class TextProcessingMainController {
             handleSaveAs(actionEvent);
         }
     }
+
     private void saveTextToFile(File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(textInputArea.getText());
@@ -143,15 +144,14 @@ public class TextProcessingMainController {
 
         String inputText = textInputArea.getText();
 
-        if(inputText.contains(word)){
+        if (inputText.contains(word)) {
             int occurrence = countOccurrences(inputText, word);
-            showAlert("Word search", word + " occurs " + occurrence + " times in text" );
-        }
-        else{
+            showAlert("Word search", word + " occurs " + occurrence + " times in text");
+        } else {
             showAlert("Word search", word + " is not in text");
         }
 
-        //searchItem.setText("");
+        // searchItem.setText("");
     }
 
     public static int countOccurrences(String text, String word) {
@@ -215,28 +215,26 @@ public class TextProcessingMainController {
             matches.add(match);
         }
         System.out.println(matches.toString());
-        for(String elem: matches){
+        for (String elem : matches) {
             finalString.append(elem + "\n");
         }
 
-        if(!matches.isEmpty()){
+        if (!matches.isEmpty()) {
             showAlert("Regex", String.valueOf(finalString), "Matches Found");
-        }
-        else{
+        } else {
             showAlert("Regex", "", "No matches found");
         }
 
     }
 
     public void handleCustomRegex(ActionEvent actionEvent) {
-        //custom dialog
+        // custom dialog
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Search and Replace with Regex");
         dialog.setHeaderText("Enter the regex to find and replace:");
 
         ButtonType searchButtonType = new ButtonType("Replace", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(searchButtonType, ButtonType.CANCEL);
-
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -284,6 +282,7 @@ public class TextProcessingMainController {
 
     public void handleAbout(ActionEvent actionEvent) {
     }
+
     @FXML
     public void handleAdd(ActionEvent actionEvent) {
         String text = textInputArea.getText();
@@ -310,13 +309,13 @@ public class TextProcessingMainController {
             matches.add(match);
         }
 
-        for(int i=0; i<arr.length; i++){
-            if(matches.contains(arr[i])){
+        for (int i = 0; i < arr.length; i++) {
+            if (matches.contains(arr[i])) {
                 arr[i] = replaceWord;
             }
         }
 
-        for(String elem: arr){
+        for (String elem : arr) {
             finalString.append(elem).append(" ");
         }
 

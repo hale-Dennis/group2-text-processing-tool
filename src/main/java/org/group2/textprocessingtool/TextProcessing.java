@@ -24,6 +24,7 @@ public class TextProcessing extends Application {
     }
 
     public static void main(String[] args) {
+
         launch();
     }
 }
