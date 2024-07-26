@@ -34,9 +34,13 @@ public class TextProcessingMainController {
     private TextFlow resultArea;
     @FXML
     private TextArea textInputArea;
+    @FXML private MenuItem menuItemWordWrap;
+    @FXML private MenuItem menuItemZoomIn;
+    @FXML private MenuItem menuItemZoomOut;
 
     private TextEditor textEditor;
     private ObservableList<String> textList;
+    private double zoomFactor = 1.0;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -322,6 +326,23 @@ public class TextProcessingMainController {
 
         textInputArea.setText(String.valueOf(finalString));
         showAlert("regex replacement", "patterns successfully replaced");
+    }
+
+    @FXML
+    private void handleMenuItemWordWrapAction() {
+        textInputArea.setWrapText(!textInputArea.isWrapText());
+    }
+
+    @FXML
+    private void handleMenuItemZoomInAction() {
+        zoomFactor += 0.1;
+        textInputArea.setStyle("-fx-font-size: " + (12 * zoomFactor) + "px;");
+    }
+
+    @FXML
+    private void handleMenuItemZoomOutAction() {
+        zoomFactor -= 0.1;
+        textInputArea.setStyle("-fx-font-size: " + (12 * zoomFactor) + "px;");
     }
 
 }
