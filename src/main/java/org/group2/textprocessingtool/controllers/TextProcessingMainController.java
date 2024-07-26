@@ -53,7 +53,15 @@ public class TextProcessingMainController {
 
     @FXML
     public void initialize() {
+        initializeTextList();
+        initializeCollectionView();
+    }
+
+    private void initializeTextList() {
         textList = FXCollections.observableArrayList(textEditor.getContent());
+    }
+
+    private void initializeCollectionView() {
         collectionView.setItems(textList);
         collectionView.setCellFactory(new Callback<>() {
             @Override
@@ -80,6 +88,7 @@ public class TextProcessingMainController {
             }
         });
     }
+
     public TextProcessingMainController(){
         textEditor =new TextEditor();
         textList = FXCollections.observableArrayList(textEditor.getContent());
@@ -173,9 +182,7 @@ public class TextProcessingMainController {
         dialog.setContentText("Word:");
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(word -> {
-            handleSearch(word);
-        });
+        result.ifPresent(this::handleSearch);
 
     }
 
