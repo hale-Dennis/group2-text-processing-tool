@@ -16,6 +16,7 @@ import javafx.util.Pair;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -193,6 +194,67 @@ public class TextProcessingMainController {
     }
 
     public void handleReplace(ActionEvent actionEvent) {
+        // Create a custom dialog
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Search and Replace");
+        dialog.setHeaderText("Enter the words to find and replace:");
+
+        // Set the button types
+        ButtonType searchButtonType = new ButtonType("Replace", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(searchButtonType, ButtonType.CANCEL);
+
+        // Create the labels and text fields
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField findField = new TextField();
+        findField.setPromptText("Find what");
+        TextField replaceField = new TextField();
+        replaceField.setPromptText("Replace with");
+
+        grid.add(new Label("Find what:"), 0, 0);
+        grid.add(findField, 1, 0);
+        grid.add(new Label("Replace with:"), 0, 1);
+        grid.add(replaceField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convert the result to a pair of strings when the search button is clicked
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == searchButtonType) {
+                return new Pair<>(findField.getText(), replaceField.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(pair -> {
+            String findWord = pair.getKey();
+            String replaceWord = pair.getValue();
+            // Handle the search and replace action (e.g., print to console)
+            handleReplaceWords(findWord, replaceWord);
+            System.out.println("Finding: " + findWord + ", Replacing with: " + replaceWord);
+        });
+    }
+
+    private void handleReplaceWords(String findWord, String replaceWord) {
+        //String[] inputText = textInputArea.getText().split("(?<=\\\\s)|(?=\\\\s)");
+        String[] inputText = textInputArea.getText().split("\\s+");
+        for(int i=0; i<inputText.length; i++){
+            if(Objects.equals(inputText[i], findWord)){
+                inputText[i] = replaceWord;
+            }
+        }
+        StringBuilder str = new StringBuilder();
+        for(String word: inputText){
+            str.append(word);
+            str.append(" ");
+        }
+
+        textInputArea.setText(String.valueOf(str));
     }
 
     @FXML
