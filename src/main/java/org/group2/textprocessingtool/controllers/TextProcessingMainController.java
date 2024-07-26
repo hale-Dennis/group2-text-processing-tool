@@ -175,7 +175,6 @@ public class TextProcessingMainController {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(word -> {
             handleSearch(word);
-            System.out.println("Searching for: " + word);
         });
 
     }
@@ -220,10 +219,7 @@ public class TextProcessingMainController {
     }
 
     private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setContentText(content);
-        alert.showAndWait();
+        showAlert(title, content, null);
     }
 
     public void handleReplace(ActionEvent actionEvent) {
@@ -269,7 +265,6 @@ public class TextProcessingMainController {
             String replaceWord = pair.getValue();
             // Handle the search and replace action (e.g., print to console)
             handleReplaceWords(findWord, replaceWord);
-            System.out.println("Finding: " + findWord + ", Replacing with: " + replaceWord);
         });
     }
 
@@ -299,9 +294,7 @@ public class TextProcessingMainController {
         dialog.setContentText("Pattern:");
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(pattern -> {
-            findAndPrintMatches(pattern);
-        });
+        result.ifPresent(this::findAndPrintMatches);
     }
 
     private void findAndPrintMatches(String regex) {
@@ -315,9 +308,8 @@ public class TextProcessingMainController {
             String match = matcher.group();
             matches.add(match);
         }
-        System.out.println(matches.toString());
         for (String elem : matches) {
-            finalString.append(elem + "\n");
+            finalString.append(elem).append("\n");
         }
 
         if (!matches.isEmpty()) {
