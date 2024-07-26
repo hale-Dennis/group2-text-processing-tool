@@ -289,7 +289,8 @@ public class TextProcessingMainController {
         if (text != null && !text.isEmpty()) {
             textEditor.addText(text);
             textList.setAll(textEditor.getContent());
-            showAlert("Success", "Text added to collection.");
+            showAlert("Success",
+                    "Text added to collection.");
             textInputArea.clear(); // Clear the text area after adding text
             resultArea.getChildren().clear(); // Clear the result area if needed
         } else {
