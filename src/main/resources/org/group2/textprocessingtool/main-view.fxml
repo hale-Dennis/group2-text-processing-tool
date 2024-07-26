@@ -36,6 +36,13 @@
                 <MenuItem text="Match phone" onAction="#handlePhone"/>
                 <MenuItem text="Match Date" onAction="#handleDate"/>
             </Menu>
+            <Menu text="Format">
+                <MenuItem text="Word Wrap" onAction="#handleMenuItemWordWrapAction"/>
+            </Menu>
+            <Menu text="View">
+                <MenuItem text="Zoom In" onAction="#handleMenuItemZoomInAction"/>
+                <MenuItem text="Zoom Out" onAction="#handleMenuItemZoomOutAction"/>
+            </Menu>
             <Menu text="Help">
                 <MenuItem text="About" onAction="#handleAbout"/>
             </Menu>
