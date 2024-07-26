@@ -1,13 +1,17 @@
 package org.group2.textprocessingtool.controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.group2.textprocessingtool.model.TextEditor;
 
 import java.io.*;
 import java.util.Optional;
@@ -23,11 +27,22 @@ public class TextProcessingMainController {
     @FXML
     public TextField replacementWord;
     @FXML
+    private TextFlow resultArea;
+    @FXML
     private TextArea textInputArea;
+
+    private TextEditor textEditor;
+    private ObservableList<String> textList;
 
     public void setPrimaryStage(Stage primaryStage) {
 
         this.primaryStage = primaryStage;
+    }
+
+    @FXML
+    public void initialize() {
+        textEditor = new TextEditor();
+        textList = FXCollections.observableArrayList();;
     }
 
     public void handleOpen(ActionEvent actionEvent) {
@@ -187,5 +202,19 @@ public class TextProcessingMainController {
 
     public void handleAbout(ActionEvent actionEvent) {
     }
+    @FXML
+    public void handleAdd(ActionEvent actionEvent) {
+        String text = textInputArea.getText();
+        if (text != null && !text.isEmpty()) {
+            textEditor.addText(text);
+            textList.setAll(textEditor.getContent());
+            showAlert("Success", "Text added to collection.");
+            textInputArea.clear(); // Clear the text area after adding text
+            resultArea.getChildren().clear(); // Clear the result area if needed
+        } else {
+            showAlert("Error", "Text area is empty. Please enter some text.");
+        }
+    }
+
 
 }
