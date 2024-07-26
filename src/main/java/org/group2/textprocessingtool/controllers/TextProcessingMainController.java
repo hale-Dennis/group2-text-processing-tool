@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 public class TextProcessingMainController {
 
     private File currentFile;
-
     private Stage primaryStage;
 
     @FXML
@@ -34,6 +33,8 @@ public class TextProcessingMainController {
     private TextFlow resultArea;
     @FXML
     private TextArea textInputArea;
+    @FXML
+    private ListView<String> collectionView;
 
     private TextEditor textEditor;
     private ObservableList<String> textList;
@@ -46,8 +47,9 @@ public class TextProcessingMainController {
     public void initialize() {
         textEditor = new TextEditor();
         textList = FXCollections.observableArrayList();
-        ;
+        collectionView.setItems(textList);
     }
+
 
     public void handleOpen(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
@@ -69,7 +71,6 @@ public class TextProcessingMainController {
                 content.append(line).append("\n");
             }
         } catch (IOException e) {
-            // Handle the exception
             e.printStackTrace();
         }
         textInputArea.setText(content.toString());
@@ -87,7 +88,6 @@ public class TextProcessingMainController {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             writer.write(textInputArea.getText());
         } catch (IOException e) {
-            // Handle the exception
             e.printStackTrace();
         }
     }
@@ -117,12 +117,15 @@ public class TextProcessingMainController {
     }
 
     public void handleCut(ActionEvent actionEvent) {
+        textInputArea.cut();
     }
 
     public void handleCopy(ActionEvent actionEvent) {
+        textInputArea.copy();
     }
 
     public void handlePaste(ActionEvent actionEvent) {
+        textInputArea.paste();
     }
 
     public void handleFind(ActionEvent actionEvent) {
@@ -150,8 +153,6 @@ public class TextProcessingMainController {
         } else {
             showAlert("Word search", word + " is not in text");
         }
-
-        // searchItem.setText("");
     }
 
     public static int countOccurrences(String text, String word) {
@@ -198,9 +199,7 @@ public class TextProcessingMainController {
         dialog.setContentText("Pattern:");
 
         Optional<String> result = dialog.showAndWait();
-        result.ifPresent(pattern -> {
-            findAndPrintMatches(pattern);
-        });
+        result.ifPresent(this::findAndPrintMatches);
     }
 
     private void findAndPrintMatches(String regex) {
@@ -216,7 +215,7 @@ public class TextProcessingMainController {
         }
         System.out.println(matches.toString());
         for (String elem : matches) {
-            finalString.append(elem + "\n");
+            finalString.append(elem).append("\n");
         }
 
         if (!matches.isEmpty()) {
@@ -224,7 +223,6 @@ public class TextProcessingMainController {
         } else {
             showAlert("Regex", "", "No matches found");
         }
-
     }
 
     public void handleCustomRegex(ActionEvent actionEvent) {
@@ -289,10 +287,9 @@ public class TextProcessingMainController {
         if (text != null && !text.isEmpty()) {
             textEditor.addText(text);
             textList.setAll(textEditor.getContent());
-            showAlert("Success",
-                    "Text added to collection.");
-            textInputArea.clear(); // Clear the text area after adding text
-            resultArea.getChildren().clear(); // Clear the result area if needed
+            showAlert("Success", "Text added to collection.");
+            textInputArea.clear();
+            resultArea.getChildren().clear();
         } else {
             showAlert("Error", "Text area is empty. Please enter some text.");
         }
@@ -323,5 +320,4 @@ public class TextProcessingMainController {
         textInputArea.setText(String.valueOf(finalString));
         showAlert("regex replacement", "patterns successfully replaced");
     }
-
 }
