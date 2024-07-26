@@ -121,12 +121,15 @@ public class TextProcessingMainController {
     }
 
     public void handleCut(ActionEvent actionEvent) {
+        textInputArea.cut();
     }
 
     public void handleCopy(ActionEvent actionEvent) {
+        textInputArea.copy();
     }
 
     public void handlePaste(ActionEvent actionEvent) {
+        textInputArea.paste();
     }
 
     public void handleFind(ActionEvent actionEvent) {
@@ -155,7 +158,6 @@ public class TextProcessingMainController {
             showAlert("Word search", word + " is not in text");
         }
 
-        // searchItem.setText("");
     }
 
     public static int countOccurrences(String text, String word) {
