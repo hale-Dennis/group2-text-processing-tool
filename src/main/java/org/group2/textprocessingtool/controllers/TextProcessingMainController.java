@@ -10,18 +10,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.TextFlow;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import org.group2.textprocessingtool.model.TextEditor;
 import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextProcessingMainController {
 
+    private static final int MAX_DISPLAY_LENGTH = 50;
     private File currentFile;
 
     private Stage primaryStage;
@@ -34,9 +37,15 @@ public class TextProcessingMainController {
     private TextFlow resultArea;
     @FXML
     private TextArea textInputArea;
+    @FXML
+    private ListView<String> collectionView;
+    @FXML private MenuItem menuItemWordWrap;
+    @FXML private MenuItem menuItemZoomIn;
+    @FXML private MenuItem menuItemZoomOut;
 
-    private TextEditor textEditor;
+    private final TextEditor textEditor;
     private ObservableList<String> textList;
+    private double zoomFactor = 1.0;
 
     public void setPrimaryStage(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -44,9 +53,36 @@ public class TextProcessingMainController {
 
     @FXML
     public void initialize() {
-        textEditor = new TextEditor();
-        textList = FXCollections.observableArrayList();
-        ;
+        textList = FXCollections.observableArrayList(textEditor.getContent());
+        collectionView.setItems(textList);
+        collectionView.setCellFactory(new Callback<>() {
+            @Override
+            public ListCell<String> call(ListView<String> listView) {
+                return new ListCell<>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                        } else {
+                            setText(item.length() > MAX_DISPLAY_LENGTH
+                                    ? item.substring(0, MAX_DISPLAY_LENGTH) + "..."
+                                    : item);
+                        }
+                    }
+                };
+            }
+        });
+
+        collectionView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                textInputArea.setText(newValue);
+            }
+        });
+    }
+    public TextProcessingMainController(){
+        textEditor =new TextEditor();
+        textList = FXCollections.observableArrayList(textEditor.getContent());
     }
 
     public void handleOpen(ActionEvent actionEvent) {
@@ -78,6 +114,7 @@ public class TextProcessingMainController {
     public void handleSave(ActionEvent actionEvent) {
         if (currentFile != null) {
             saveTextToFile(currentFile);
+            primaryStage.setTitle(currentFile.getName());
         } else {
             handleSaveAs(actionEvent);
         }
@@ -101,6 +138,7 @@ public class TextProcessingMainController {
         if (file != null) {
             currentFile = file;
             saveTextToFile(file);
+            primaryStage.setTitle(currentFile.getName());
         }
     }
 
@@ -117,12 +155,15 @@ public class TextProcessingMainController {
     }
 
     public void handleCut(ActionEvent actionEvent) {
+        textInputArea.cut();
     }
 
     public void handleCopy(ActionEvent actionEvent) {
+        textInputArea.copy();
     }
 
     public void handlePaste(ActionEvent actionEvent) {
+        textInputArea.paste();
     }
 
     public void handleFind(ActionEvent actionEvent) {
@@ -151,7 +192,6 @@ public class TextProcessingMainController {
             showAlert("Word search", word + " is not in text");
         }
 
-        // searchItem.setText("");
     }
 
     public static int countOccurrences(String text, String word) {
@@ -187,6 +227,67 @@ public class TextProcessingMainController {
     }
 
     public void handleReplace(ActionEvent actionEvent) {
+        // Create a custom dialog
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Search and Replace");
+        dialog.setHeaderText("Enter the words to find and replace:");
+
+        // Set the button types
+        ButtonType searchButtonType = new ButtonType("Replace", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(searchButtonType, ButtonType.CANCEL);
+
+        // Create the labels and text fields
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField findField = new TextField();
+        findField.setPromptText("Find what");
+        TextField replaceField = new TextField();
+        replaceField.setPromptText("Replace with");
+
+        grid.add(new Label("Find what:"), 0, 0);
+        grid.add(findField, 1, 0);
+        grid.add(new Label("Replace with:"), 0, 1);
+        grid.add(replaceField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convert the result to a pair of strings when the search button is clicked
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == searchButtonType) {
+                return new Pair<>(findField.getText(), replaceField.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(pair -> {
+            String findWord = pair.getKey();
+            String replaceWord = pair.getValue();
+            // Handle the search and replace action (e.g., print to console)
+            handleReplaceWords(findWord, replaceWord);
+            System.out.println("Finding: " + findWord + ", Replacing with: " + replaceWord);
+        });
+    }
+
+    private void handleReplaceWords(String findWord, String replaceWord) {
+        //String[] inputText = textInputArea.getText().split("(?<=\\\\s)|(?=\\\\s)");
+        String[] inputText = textInputArea.getText().split("\\s+");
+        for(int i=0; i<inputText.length; i++){
+            if(Objects.equals(inputText[i], findWord)){
+                inputText[i] = replaceWord;
+            }
+        }
+        StringBuilder str = new StringBuilder();
+        for(String word: inputText){
+            str.append(word);
+            str.append(" ");
+        }
+
+        textInputArea.setText(String.valueOf(str));
     }
 
     @FXML
@@ -272,12 +373,15 @@ public class TextProcessingMainController {
     }
 
     public void handlePhone(ActionEvent actionEvent) {
+        findAndPrintMatches("^(\\+\\d{1,2}\\s)?\\(?\\d{3}\\)?[\\s.-]\\d{3}[\\s.-]\\d{4}$");
     }
 
     public void handleMail(ActionEvent actionEvent) {
+        findAndPrintMatches("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])");
     }
 
     public void handleDate(ActionEvent actionEvent) {
+        findAndPrintMatches("[0-9]{2}/[0-9]{2}/[0-9]{4}");
     }
 
     public void handleAbout(ActionEvent actionEvent) {
@@ -289,9 +393,9 @@ public class TextProcessingMainController {
         if (text != null && !text.isEmpty()) {
             textEditor.addText(text);
             textList.setAll(textEditor.getContent());
-            showAlert("Success", "Text added to collection.");
+            showAlert("Success",
+                    "Text added to collection.");
             textInputArea.clear(); // Clear the text area after adding text
-            resultArea.getChildren().clear(); // Clear the result area if needed
         } else {
             showAlert("Error", "Text area is empty. Please enter some text.");
         }
@@ -321,6 +425,23 @@ public class TextProcessingMainController {
 
         textInputArea.setText(String.valueOf(finalString));
         showAlert("regex replacement", "patterns successfully replaced");
+    }
+
+    @FXML
+    private void handleMenuItemWordWrapAction() {
+        textInputArea.setWrapText(!textInputArea.isWrapText());
+    }
+
+    @FXML
+    private void handleMenuItemZoomInAction() {
+        zoomFactor += 0.1;
+        textInputArea.setStyle("-fx-font-size: " + (12 * zoomFactor) + "px;");
+    }
+
+    @FXML
+    private void handleMenuItemZoomOutAction() {
+        zoomFactor -= 0.1;
+        textInputArea.setStyle("-fx-font-size: " + (12 * zoomFactor) + "px;");
     }
 
 }

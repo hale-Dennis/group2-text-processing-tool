@@ -1,58 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.MenuBar?>
 
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.text.TextFlow?>
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="org.group2.textprocessingtool.controllers.TextProcessingMainController">
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21" fx:controller="org.group2.textprocessingtool.controllers.TextProcessingMainController">
     <top>
         <MenuBar>
             <Menu text="File">
-                <MenuItem text="Open" onAction="#handleOpen"/>
-                <MenuItem text="Save" onAction="#handleSave"/>
-                <MenuItem text="Save As" onAction="#handleSaveAs"/>
-                <MenuItem text="Save to collection" onAction="#handleAdd"/>
-                <MenuItem text="Exit" onAction="#handleExit"/>
+                <MenuItem onAction="#handleOpen" text="Open" />
+                <MenuItem onAction="#handleSave" text="Save" />
+                <MenuItem onAction="#handleSaveAs" text="Save As" />
+                <MenuItem onAction="#handleAdd" text="Save to collection" />
+                <MenuItem onAction="#handleExit" text="Exit" />
             </Menu>
             <Menu text="Edit">
-                <MenuItem text="Undo" onAction="#handleUndo"/>
-                <MenuItem text="Redo" onAction="#handleRedo"/>
-                <MenuItem text="Cut" onAction="#handleCut"/>
-                <MenuItem text="Copy" onAction="#handleCopy"/>
-                <MenuItem text="Paste" onAction="#handlePaste"/>
-                <MenuItem text="Find" onAction="#handleFind"/>
-                <MenuItem text="Replace" onAction="#handleReplace"/>
+                <MenuItem onAction="#handleUndo" text="Undo" />
+                <MenuItem onAction="#handleRedo" text="Redo" />
+                <MenuItem onAction="#handleCut" text="Cut" />
+                <MenuItem onAction="#handleCopy" text="Copy" />
+                <MenuItem onAction="#handlePaste" text="Paste" />
+                <MenuItem onAction="#handleFind" text="Find" />
+                <MenuItem onAction="#handleReplace" text="Replace" />
             </Menu>
             <Menu text="Regex">
-                <MenuItem text="Custom regex" onAction="#handleCustomRegexTwo"/>
-                <MenuItem text="Replace with regex" onAction="#handleCustomRegex"/>
-                <MenuItem text="Match e-mail" onAction="#handleMail"/>
-                <MenuItem text="Match phone" onAction="#handlePhone"/>
-                <MenuItem text="Match Date" onAction="#handleDate"/>
+                <MenuItem onAction="#handleCustomRegexTwo" text="Custom regex" />
+                <MenuItem onAction="#handleCustomRegex" text="Replace with regex" />
+                <MenuItem onAction="#handleMail" text="Match e-mail" />
+                <MenuItem onAction="#handlePhone" text="Match phone" />
+                <MenuItem onAction="#handleDate" text="Match Date" />
+            </Menu>
+            <Menu text="Format">
+                <MenuItem onAction="#handleMenuItemWordWrapAction" text="Word Wrap" />
+            </Menu>
+            <Menu text="View">
+                <MenuItem onAction="#handleMenuItemZoomInAction" text="Zoom In" />
+                <MenuItem onAction="#handleMenuItemZoomOutAction" text="Zoom Out" />
             </Menu>
             <Menu text="Help">
-                <MenuItem text="About" onAction="#handleAbout"/>
+                <MenuItem onAction="#handleAbout" text="About" />
             </Menu>
         </MenuBar>
     </top>
     <center>
-        <VBox xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" spacing="10" alignment="TOP_CENTER" >
+        <VBox alignment="TOP_CENTER" spacing="10">
             <padding>
-                <Insets top="20" right="20" bottom="20" left="20"/>
+                <Insets bottom="20" left="20" right="20" top="20" />
             </padding>
 
-
-
             <!-- Text Input Area -->
-            <TextArea fx:id="textInputArea" prefHeight="800" prefWidth="300" wrapText="true"/>
-            <TextFlow fx:id="resultArea" layoutX="14.0" layoutY="284.0" prefHeight="200.0" prefWidth="200.0" />
+            <TextArea fx:id="textInputArea" prefHeight="539.0" prefWidth="400" wrapText="true" />
 
+            <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Saved Collections" />
+            <!-- Collection View -->
+            <ListView fx:id="collectionView" prefHeight="200" prefWidth="400" />
         </VBox>
-
     </center>
 </BorderPane>
