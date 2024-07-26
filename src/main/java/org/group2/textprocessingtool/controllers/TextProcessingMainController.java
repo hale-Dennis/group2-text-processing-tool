@@ -83,6 +83,7 @@ public class TextProcessingMainController {
     public void handleSave(ActionEvent actionEvent) {
         if (currentFile != null) {
             saveTextToFile(currentFile);
+            primaryStage.setTitle(currentFile.getName());
         } else {
             handleSaveAs(actionEvent);
         }
@@ -106,6 +107,7 @@ public class TextProcessingMainController {
         if (file != null) {
             currentFile = file;
             saveTextToFile(file);
+            primaryStage.setTitle(currentFile.getName());
         }
     }
 
