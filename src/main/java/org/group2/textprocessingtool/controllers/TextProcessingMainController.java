@@ -2,15 +2,19 @@ package org.group2.textprocessingtool.controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputDialog;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TextProcessingMainController {
 
@@ -170,10 +174,88 @@ public class TextProcessingMainController {
     public void handleReplace(ActionEvent actionEvent) {
     }
 
-    public void handleCustomRegexTwo(ActionEvent actionEvent) {
+    @FXML
+    private void handleCustomRegexTwo() {
+        // Show an input dialog to get the regex pattern from the user
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Custom Regex");
+        dialog.setHeaderText("Enter a regex pattern:");
+        dialog.setContentText("Pattern:");
+
+        Optional<String> result = dialog.showAndWait();
+        result.ifPresent(pattern -> {
+            findAndPrintMatches(pattern);
+        });
+    }
+
+    private void findAndPrintMatches(String regex) {
+        List<String> matches = new ArrayList<>();
+        StringBuilder finalString = new StringBuilder();
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(textInputArea.getText());
+
+        // Print matches to console
+        while (matcher.find()) {
+            String match = matcher.group();
+            matches.add(match);
+        }
+        System.out.println(matches.toString());
+        for(String elem: matches){
+            finalString.append(elem + "\n");
+        }
+
+        if(!matches.isEmpty()){
+            showAlert("Regex", String.valueOf(finalString), "Matches Found");
+        }
+        else{
+            showAlert("Regex", "", "No matches found");
+        }
+
     }
 
     public void handleCustomRegex(ActionEvent actionEvent) {
+        //custom dialog
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Search and Replace with Regex");
+        dialog.setHeaderText("Enter the regex to find and replace:");
+
+        ButtonType searchButtonType = new ButtonType("Replace", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(searchButtonType, ButtonType.CANCEL);
+
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField findField = new TextField();
+        findField.setPromptText("Find what pattern");
+        TextField replaceField = new TextField();
+        replaceField.setPromptText("Replace with");
+
+        grid.add(new Label("Find what:"), 0, 0);
+        grid.add(findField, 1, 0);
+        grid.add(new Label("Replace with:"), 0, 1);
+        grid.add(replaceField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Convert the result to a pair of strings when the search button is clicked
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == searchButtonType) {
+                return new Pair<>(findField.getText(), replaceField.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(pair -> {
+            String findWord = pair.getKey();
+            String replaceWord = pair.getValue();
+
+            handleReplaceWithRegex(findWord, replaceWord);
+        });
     }
 
     public void handlePhone(ActionEvent actionEvent) {
@@ -186,6 +268,31 @@ public class TextProcessingMainController {
     }
 
     public void handleAbout(ActionEvent actionEvent) {
+    }
+    private void handleReplaceWithRegex(String findWord, String replaceWord) {
+        List<String> matches = new ArrayList<>();
+        String[] arr = textInputArea.getText().split("\\s+");
+        StringBuilder finalString = new StringBuilder();
+        Pattern pattern = Pattern.compile(findWord);
+        Matcher matcher = pattern.matcher(textInputArea.getText());
+
+        while (matcher.find()) {
+            String match = matcher.group();
+            matches.add(match);
+        }
+
+        for(int i=0; i<arr.length; i++){
+            if(matches.contains(arr[i])){
+                arr[i] = replaceWord;
+            }
+        }
+
+        for(String elem: arr){
+            finalString.append(elem).append(" ");
+        }
+
+        textInputArea.setText(String.valueOf(finalString));
+        showAlert("regex replacement", "patterns successfully replaced");
     }
 
 }
